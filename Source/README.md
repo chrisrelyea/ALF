@@ -5,17 +5,12 @@ Made with JUCE
 
 Features:
 
-***Bitcrusher***
-Allows for decimation (manual lowering of sample rate) down to a target kHz value.
+***Bitcrusher***: Allows for decimation (manual lowering of sample rate) down to a target kHz value.
 
-***Vinyl Noise***
-Add in a vinyl crackle effect to your mix for that vintage sound. Adjustable volume.
+***Vinyl Noise***: Add in a vinyl crackle effect to your mix for that vintage sound. Adjustable volume.
 
-***Pre/Post Filter Customization***
-Toggleable low pass filters before and after main effects are applied gives the user the option to minimize aliasing.
+***Pre/Post Filter Customization***: Toggleable low pass filters before and after main effects are applied gives the user the option to minimize aliasing.
 
-***Bit Depth Control (planned)***
-Simulate the "quantization noise" characteristic of popular audio formats including CD, DVD, early digital audio, or telephony.
+***Bit Depth Control (planned)***: Simulate the "quantization noise" characteristic of popular audio formats including CD, DVD, early digital audio, or telephony.
 
-***Randomizer/Presets (planned)***
-Switch to tailored ALF presets that most accurately simulate the sound quality of a specific format, or randomize parameters to make something entirely new.
+***Randomizer/Presets (planned)***: Switch to tailored ALF presets that most accurately simulate the sound quality of a specific format, or randomize parameters to make something entirely new.
