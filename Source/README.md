@@ -1,9 +1,9 @@
-ALF (All-Purpose Lo-fi Funhouse) is a VST3/AU plugin that gives the user the tools they need to experiment with classic lo-fi audio effects
-Created by Chris Relyea, 2024
-Made with JUCE
+# ALF 
+ALF (All-Purpose Lo-fi Funhouse) is a VST3/AU plugin that gives the user the tools they need to experiment with classic lo-fi audio effects.
 
+Created by Chris Relyea, 2024, made with JUCE.
 
-Features:
+## Features
 
 ***Bitcrusher***: Allows for decimation (manual lowering of sample rate) down to a target kHz value.
 
