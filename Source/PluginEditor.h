@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
+
 //==============================================================================
 /**
 */
@@ -28,7 +29,19 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     ALFAudioProcessor& audioProcessor;
-
+    
+    // downsample
+    juce::Slider downsampleSlider;
+    juce::Label downsampleLabel;
+    juce::AudioProcessorValueTreeState::SliderAttachment downsampleAttachment { audioProcessor.apvts, blockSizeParamID.getParamID(), downsampleSlider
+    };
+    
+    
+    // noise level
+    juce::Slider noiseLevelSlider;
+    juce::Label noiseLevelLabel;
+    juce::AudioProcessorValueTreeState::SliderAttachment noiseLevelAttachment { audioProcessor.apvts, noiseLevelParamID.getParamID(), noiseLevelSlider};
+    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ALFAudioProcessorEditor)
 };

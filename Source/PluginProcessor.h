@@ -18,7 +18,7 @@ const juce::ParameterID blockSizeParamID {"blocksize", 1};
 
 const juce::ParameterID noiseLevelParamID {"noise", 1};
 
-const juce::ParameterID noiseTypeParamID {"noisetype", 1}
+const juce::ParameterID noiseTypeParamID {"noisetype", 1};
 
 //==============================================================================
 /**
@@ -63,6 +63,17 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
+    
+    juce::AudioProcessorValueTreeState apvts {
+        *this, nullptr, "Parameters", createParameterLayout()
+    };
+    
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+    
+    
+    float blockSizeForTextBox;
+    
+    
 
 private:
     //==============================================================================
@@ -71,11 +82,6 @@ private:
     juce::dsp::IIR::Filter<float> lowPassFilterPost;
     juce::dsp::ProcessSpec spec;
     
-    juce::AudioProcessorValueTreeState apvts {
-        *this, nullptr, "Parameters", createParameterLayout()
-    };
-    
-    juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();  
     
     
     int currentVinylIndex;

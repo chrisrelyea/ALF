@@ -114,7 +114,7 @@ void ALFAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     
     juce::AudioFormatManager formatManager;
     formatManager.registerBasicFormats();
-    auto* reader = formatManager.createReaderFor (std::move (memStream));
+    std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(std::move(memStream)));
     juce::int64 totalSamples = reader->lengthInSamples;
     vinylBuffer.setSize(reader->numChannels, static_cast<int>(totalSamples));    
     reader->read(vinylBuffer.getArrayOfWritePointers(), vinylBuffer.getNumChannels(), 0, static_cast<int>(totalSamples));
@@ -254,12 +254,10 @@ void ALFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         
         
         
-        DBG("num vinyl channels " << vinylBuffer.getNumChannels());
         
         float noiseModifier = apvts.getRawParameterValue(noiseLevelParamID.getParamID())->load();
         if (channel < vinylBuffer.getNumChannels())
         {
-            DBG("this block is running");
             auto* vinylData = vinylBuffer.getReadPointer(channel);
             auto* channelData = buffer.getWritePointer (channel);
             for (int i = 0; i < numSamples; i++) {
