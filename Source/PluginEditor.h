@@ -43,5 +43,14 @@ private:
     juce::AudioProcessorValueTreeState::SliderAttachment noiseLevelAttachment { audioProcessor.apvts, noiseLevelParamID.getParamID(), noiseLevelSlider};
     
 
+
+    // kHz textbox
+    juce::Label targetRateLabel;
+
+    
+    juce::Font targetRateLabelFont = juce::Font(juce::Typeface::createSystemTypefaceFor(BinaryData::Futura_ttc,BinaryData::Futura_ttcSize));
+    juce::Font defaultFont = juce::Font(juce::Typeface::createSystemTypefaceFor(BinaryData::Futura_ttc,BinaryData::Futura_ttcSize));
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ALFAudioProcessorEditor)
+    
 };

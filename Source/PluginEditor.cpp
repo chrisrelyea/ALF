@@ -22,9 +22,10 @@ ALFAudioProcessorEditor::ALFAudioProcessorEditor (ALFAudioProcessor& p)
     downsampleSlider.setBounds(0,0,250,40);
     addAndMakeVisible(downsampleSlider);
     
-    downsampleLabel.setText("Downsample", juce::NotificationType::dontSendNotification);
+    downsampleLabel.setText("Downsample Factor", juce::NotificationType::dontSendNotification);
     downsampleLabel.setJustificationType(juce::Justification::horizontallyCentred);
     downsampleLabel.attachToComponent(&downsampleSlider, false);
+    downsampleLabel.setFont(defaultFont);
     addAndMakeVisible(downsampleLabel);
     
     
@@ -34,11 +35,33 @@ ALFAudioProcessorEditor::ALFAudioProcessorEditor (ALFAudioProcessor& p)
     noiseLevelSlider.setBounds(0,0,70,86);
     addAndMakeVisible(noiseLevelSlider);
     
-    noiseLevelLabel.setText("Noise Level", juce::NotificationType::dontSendNotification);
+    noiseLevelLabel.setText("Vinyl Noise", juce::NotificationType::dontSendNotification);
     noiseLevelLabel.setJustificationType(juce::Justification::horizontallyCentred);
     noiseLevelLabel.attachToComponent(&noiseLevelSlider,false);
+    noiseLevelLabel.setFont(defaultFont);
     addAndMakeVisible(noiseLevelLabel);
     
+    // kHz Label
+    targetRateLabel.setText("44.1kHz", juce::NotificationType::dontSendNotification);
+    targetRateLabel.setBounds(0,0,120,30);
+    targetRateLabelFont.setHeight(20);
+    targetRateLabel.setFont(targetRateLabelFont);
+    addAndMakeVisible(targetRateLabel);
+    downsampleSlider.onValueChange = [this] { 
+        
+        // get new rate by dividing sample rate by the block size
+        float newRate = (audioProcessor.sampleRateForLabel/audioProcessor.apvts.getRawParameterValue(blockSizeParamID.getParamID())->load() / 1000);
+        
+        // convert to string with 2 decimal places
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(2) << newRate;
+        std::string newRateString = oss.str();
+        
+        targetRateLabel.setText( newRateString + " kHz", juce::NotificationType::dontSendNotification);
+
+    
+        
+    };
     
     
     
@@ -77,4 +100,5 @@ void ALFAudioProcessorEditor::resized()
     
     downsampleSlider.setTopLeftPosition(125, 125);
     noiseLevelSlider.setTopLeftPosition(100, 200);
+    targetRateLabel.setTopLeftPosition(15,125);
 }

@@ -105,6 +105,10 @@ void ALFAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     lowPassFilterPre.prepare(spec);
     lowPassFilterPost.reset();
     lowPassFilterPost.prepare(spec);
+    
+    
+    // Send sample rate to target rate display for new kHz calculation
+    sampleRateForLabel = sampleRate;
 
     
     

@@ -72,6 +72,7 @@ public:
     
     
     float blockSizeForTextBox;
+    double sampleRateForLabel;
     
     
 

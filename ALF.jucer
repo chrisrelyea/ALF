@@ -5,6 +5,7 @@
   <MAINGROUP id="St4g5Q" name="ALF">
     <GROUP id="{982BC0A4-E647-758D-BAB9-CB108181740F}" name="Source">
       <FILE id="ZvPO6j" name="logo.png" compile="0" resource="1" file="../../Downloads/logo.png"/>
+      <FILE id="TWZZuY" name="Futura.ttc" compile="0" resource="1" file="/System/Library/Fonts/Supplemental/Futura.ttc"/>
       <FILE id="JTF3X1" name="vinyl.wav" compile="0" resource="1" file="../../Desktop/alf test audio/vinyl/vinyl.wav"/>
       <FILE id="oiGOP1" name="ALFTools.h" compile="0" resource="0" file="Source/ALFTools.h"/>
       <FILE id="yq70Gv" name="ALFTools.cpp" compile="1" resource="0" file="Source/ALFTools.cpp"/>
