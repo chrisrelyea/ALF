@@ -54,7 +54,20 @@ ALFAudioProcessorEditor::~ALFAudioProcessorEditor()
 //==============================================================================
 void ALFAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::darkgrey);
+    auto gradient = juce::ColourGradient(juce::Colours::darkgrey,0.0f,0.0f,juce::Colours::grey,500.0f,330.0f,false);
+    g.setColour(juce::Colours::grey);
+    g.setGradientFill(gradient);
+    g.fillAll();
+    
+    auto rect = getLocalBounds().withHeight(75);
+    auto rectGradient = juce::ColourGradient(juce::Colours::steelblue, 0.0f,0.f, juce::Colours::fuchsia, 500.0f, 0.0f, false);
+    g.setGradientFill(rectGradient);
+    g.fillRect(rect);
+    
+    auto image = juce::ImageCache::getFromMemory(BinaryData::logo_png, BinaryData::logo_pngSize);
+    int destWidth = image.getWidth() / 4;
+    int destHeight = image.getHeight() / 4;
+    g.drawImage(image, getWidth() /2 - destWidth / 2, 0 , destWidth, destHeight, 0, 0, image.getWidth(), image.getHeight());
 }
 
 void ALFAudioProcessorEditor::resized()
