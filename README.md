@@ -5,7 +5,7 @@ Created by Chris Relyea, 2024. Made with JUCE.
 
 ## Features
 
-***Bitcrusher***: Allows for decimation (manual lowering of sample rate) down to a target kHz value.
+***Downsampling***: Hear what input audio would sound like if it were resampled at a lower rate.
 
 ***Vinyl Noise***: Add in a vinyl crackle effect to your mix for that vintage sound. Adjustable volume.
 
