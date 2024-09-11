@@ -11,6 +11,6 @@ Created by Chris Relyea, 2024. Made with JUCE.
 
 ***Pre/Post Filter Customization***: Toggleable low pass filters before and after main effects are applied gives the user the option to minimize aliasing.
 
-***Bit Depth Control (planned)***: Simulate the "quantization noise" characteristic of popular audio formats including CD, DVD, early digital audio, or telephony.
+***Bit Depth Control***: Simulate the "quantization noise" characteristic of popular audio formats including CD, DVD, early digital audio, or telephony.
 
 ***Randomizer/Presets (planned)***: Switch to tailored ALF presets that most accurately simulate the sound quality of a specific format, or randomize parameters to make something entirely new.
