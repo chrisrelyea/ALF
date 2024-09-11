@@ -77,7 +77,7 @@ ALFAudioProcessorEditor::~ALFAudioProcessorEditor()
 //==============================================================================
 void ALFAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    auto gradient = juce::ColourGradient(juce::Colours::darkgrey,0.0f,0.0f,juce::Colours::grey,500.0f,330.0f,false);
+    auto gradient = juce::ColourGradient(juce::Colours::black,0.0f,0.0f,juce::Colours::darkgrey,500.0f,330.0f,false);
     g.setColour(juce::Colours::grey);
     g.setGradientFill(gradient);
     g.fillAll();
