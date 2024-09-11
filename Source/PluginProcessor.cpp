@@ -258,7 +258,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ALFAudioProcessor::createPar
     layout.add(std::make_unique<juce::AudioParameterBool>(lpPreParamID,"Pre LP Filter", false));
     layout.add(std::make_unique<juce::AudioParameterBool>(lpPostParamID,"Post LP Filter", false));
     layout.add(std::make_unique<juce::AudioParameterFloat>(blockSizeParamID, "Downsampling Factor", 1.0, 20.0, 1.0));
-    layout.add(std::make_unique<juce::AudioParameterFloat>(noiseLevelParamID, "Noise Level", 0.0, 1.0, 0.5));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(noiseLevelParamID, "Noise Level", 0.0, 1.0, 0.0));
     layout.add(std::make_unique<juce::AudioParameterInt>(noiseTypeParamID, "Noise Type", 0, 1, 0));
     layout.add(std::make_unique<juce::AudioParameterBool>(bitDepthOnParamID, "Bit Depth Control", false));
     layout.add(std::make_unique<juce::AudioParameterInt>(bitDepthValParamID, "Target Bit Depth", 0, 4, 0));
