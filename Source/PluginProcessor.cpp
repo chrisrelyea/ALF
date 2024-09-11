@@ -215,6 +215,9 @@ void ALFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         }
         
         if (apvts.getRawParameterValue(lpPostParamID.getParamID())->load() && subblockSize > 1) applyFilter(channel, subblockSize, getSampleRate(), lowPassFilter, spec, buffer);
+        
+        buffer.applyGain(apvts.getRawParameterValue(gainValParamID.getParamID())->load());
+        
 
     }
 }
@@ -262,6 +265,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ALFAudioProcessor::createPar
     layout.add(std::make_unique<juce::AudioParameterInt>(noiseTypeParamID, "Noise Type", 0, 1, 0));
     layout.add(std::make_unique<juce::AudioParameterBool>(bitDepthOnParamID, "Bit Depth Control", false));
     layout.add(std::make_unique<juce::AudioParameterInt>(bitDepthValParamID, "Target Bit Depth", 0, 4, 0));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(gainValParamID, "Output Gain", 0.0, 2.0, 1.0));
 
     
     

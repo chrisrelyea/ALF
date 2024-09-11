@@ -24,6 +24,8 @@ const juce::ParameterID bitDepthOnParamID {"bitdepthon", 1};
 
 const juce::ParameterID bitDepthValParamID {"bitdepthval", 1};
 
+const juce::ParameterID gainValParamID {"gainval", 1};
+
 //==============================================================================
 /**
 */
