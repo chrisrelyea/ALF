@@ -15,4 +15,6 @@
 
 void bitcrushSamples(juce::AudioBuffer<float>& buffer, float blockSize, int channel);
 
-juce::AudioBuffer<float> loadWavFile(const juce::File& file);
+void applyFilter(int channel, float subblockSize, double sampleRate, juce::dsp::IIR::Filter<float>& lowPassFilter, juce::dsp::ProcessSpec spec, juce::AudioBuffer<float>& buffer);
+
+void changeBitDepth(juce::AudioBuffer<float>& buffer, int channel, int paramVal);

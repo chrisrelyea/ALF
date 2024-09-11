@@ -20,6 +20,10 @@ const juce::ParameterID noiseLevelParamID {"noise", 1};
 
 const juce::ParameterID noiseTypeParamID {"noisetype", 1};
 
+const juce::ParameterID bitDepthOnParamID {"bitdepthon", 1};
+
+const juce::ParameterID bitDepthValParamID {"bitdepthval", 1};
+
 //==============================================================================
 /**
 */
@@ -79,12 +83,13 @@ public:
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ALFAudioProcessor)
-    juce::dsp::IIR::Filter<float> lowPassFilterPre;
+    juce::dsp::IIR::Filter<float> lowPassFilter;
     juce::dsp::IIR::Filter<float> lowPassFilterPost;
     juce::dsp::ProcessSpec spec;
     
     
     
-    int currentVinylIndex;
-    juce::AudioBuffer<float> vinylBuffer;
+    int currentVinylIndex;          // keep track of index within vinyl data to loop over full vinyl buffer
+    juce::AudioBuffer<float> vinylBuffer;           // store vinyl sample audio data
+    
 };

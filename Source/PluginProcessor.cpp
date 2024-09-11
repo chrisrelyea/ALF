@@ -101,8 +101,8 @@ void ALFAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     spec.numChannels = getTotalNumOutputChannels();
 
     // Initialize the filter
-    lowPassFilterPre.reset();
-    lowPassFilterPre.prepare(spec);
+    lowPassFilter.reset();
+    lowPassFilter.prepare(spec);
     lowPassFilterPost.reset();
     lowPassFilterPost.prepare(spec);
     
@@ -112,18 +112,15 @@ void ALFAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 
     
     
+    // Set up the vinyl noise
     currentVinylIndex = 0;
-    
     auto memStream = std::make_unique<juce::MemoryInputStream>(BinaryData::vinyl_wav, BinaryData::vinyl_wavSize, false);
-    
     juce::AudioFormatManager formatManager;
     formatManager.registerBasicFormats();
     std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(std::move(memStream)));
     juce::int64 totalSamples = reader->lengthInSamples;
     vinylBuffer.setSize(reader->numChannels, static_cast<int>(totalSamples));    
     reader->read(vinylBuffer.getArrayOfWritePointers(), vinylBuffer.getNumChannels(), 0, static_cast<int>(totalSamples));
-    DBG("First value in vinylBuffer: " << vinylBuffer.getReadPointer(0)[0]);
-    DBG("num vinyl hannels: " << vinylBuffer.getNumChannels());
     
     
     
@@ -179,86 +176,20 @@ void ALFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    
-    
     
 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        // size of new blocks resampling
-        float subblockSize = apvts.getRawParameterValue(blockSizeParamID.getParamID())->load(); // THIS WILL BE A PARAMETER
+        float subblockSize = apvts.getRawParameterValue(blockSizeParamID.getParamID())->load();  // get downsampling factor
         int numSamples = buffer.getNumSamples();
         
-        // check parameter here
-        if (apvts.getRawParameterValue(lpPreParamID.getParamID())->load() && subblockSize > 1) {
-            
-            // Anti-Aliasing:
-            // create LP cutoff at the nyquist frequency: current sample rate / subblock size is the resulting sample rate
-            // resulting sample rate / 2 is the highest frequency that won't result in aliasing according to the Nyquist theorem
-            
-            float cutoffFrequency = (getSampleRate() / subblockSize / 2) ;
-            *lowPassFilterPre.coefficients = *juce::dsp::IIR::Coefficients<float>::makeLowPass(spec.sampleRate, cutoffFrequency);
-            
-            // Process the audio buffer with the updated filter
-            juce::dsp::AudioBlock<float> audioBlock(buffer);
-            auto channelBlock = audioBlock.getSingleChannelBlock(channel);
-            juce::dsp::ProcessContextReplacing<float> context(channelBlock);
-            lowPassFilterPre.process(context);
-        }
+        if (apvts.getRawParameterValue(lpPreParamID.getParamID())->load() && subblockSize > 1) applyFilter(channel, subblockSize, getSampleRate(), lowPassFilter, spec, buffer);
+        
+        if (subblockSize > 1) bitcrushSamples(buffer, subblockSize, channel);   // resample at lower rate
+
         
         
-        // resample at lower rate
-        if (subblockSize > 1)
-        {
-            bitcrushSamples(buffer, subblockSize, channel);
-            
-        }
-        
-        
-        if (apvts.getRawParameterValue(lpPostParamID.getParamID())->load() && subblockSize > 1) {
-            // Post LP filter - after bitcrushing
-        
-            float cutoffFrequency = (getSampleRate() / subblockSize / 2) ;
-            *lowPassFilterPost.coefficients = *juce::dsp::IIR::Coefficients<float>::makeLowPass(spec.sampleRate, cutoffFrequency);
-            
-            // Process the audio buffer with the updated filter
-            juce::dsp::AudioBlock<float> audioBlock(buffer);
-            auto channelBlock = audioBlock.getSingleChannelBlock(channel);
-            juce::dsp::ProcessContextReplacing<float> context(channelBlock);
-            lowPassFilterPost.process(context);
-        }
-        
-        
-        if (subblockSize > 1)
-        {
-            //fade in/out
-            
-            // in
-            int fadeLength = 32;
-            auto* channelData = buffer.getWritePointer (channel);
-            for (int i = 0; i < fadeLength; ++i) {
-                float fadeFactor = static_cast<float>(i) / fadeLength;
-                channelData[i] *= fadeFactor;
-            }
-            
-            // out
-            for (int i = numSamples - fadeLength; i < numSamples; ++i) {
-                float fadeFactor = static_cast<float>(numSamples - i) / fadeLength;
-                channelData[i] *= fadeFactor;
-            }
-        }
-        
-        
-        
-        
-        
+        // add vinyl noise
         float noiseModifier = apvts.getRawParameterValue(noiseLevelParamID.getParamID())->load();
         if (channel < vinylBuffer.getNumChannels())
         {
@@ -274,6 +205,17 @@ void ALFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
             }
         }
         
+        
+        // if bit depth control enabled, change bit depth to new target bit depth
+        // options are 24, 16, 12, 8, 4 (bitDepthVal parameter values 0, 1, 2, 3, 4 respectively)
+
+        if (apvts.getRawParameterValue(bitDepthOnParamID.getParamID())->load()) {  // if bit depth control enabled
+            int paramVal = apvts.getRawParameterValue(bitDepthValParamID.getParamID())->load();
+            changeBitDepth(buffer, channel, paramVal);
+        }
+        
+        if (apvts.getRawParameterValue(lpPostParamID.getParamID())->load() && subblockSize > 1) applyFilter(channel, subblockSize, getSampleRate(), lowPassFilter, spec, buffer);
+
     }
 }
 
@@ -315,9 +257,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout ALFAudioProcessor::createPar
     
     layout.add(std::make_unique<juce::AudioParameterBool>(lpPreParamID,"Pre LP Filter", false));
     layout.add(std::make_unique<juce::AudioParameterBool>(lpPostParamID,"Post LP Filter", false));
-    layout.add(std::make_unique<juce::AudioParameterFloat>(blockSizeParamID, "Bitcrush Amount", 1.0, 20.0, 1.0));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(blockSizeParamID, "Downsampling Factor", 1.0, 20.0, 1.0));
     layout.add(std::make_unique<juce::AudioParameterFloat>(noiseLevelParamID, "Noise Level", 0.0, 1.0, 0.5));
     layout.add(std::make_unique<juce::AudioParameterInt>(noiseTypeParamID, "Noise Type", 0, 1, 0));
+    layout.add(std::make_unique<juce::AudioParameterBool>(bitDepthOnParamID, "Bit Depth Control", false));
+    layout.add(std::make_unique<juce::AudioParameterInt>(bitDepthValParamID, "Target Bit Depth", 0, 4, 0));
+
+    
     
     return layout;
 }

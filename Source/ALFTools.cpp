@@ -51,8 +51,70 @@ void bitcrushSamples(juce::AudioBuffer<float>& buffer, float blockSize, int chan
             i = blockEnd;
         }
     }
+    
+    
+    // Fade in and out of each buffer to avoid clicks
+    int fadeLength = 64;
+    for (int i = 0; i < fadeLength; ++i) {
+        float fadeFactor = static_cast<float>(i) / fadeLength;
+        channelData[i] *= fadeFactor;
+    }
+    for (int i = numSamples - fadeLength; i < numSamples; ++i) {
+        float fadeFactor = static_cast<float>(numSamples - i) / fadeLength;
+        channelData[i] *= fadeFactor;
+    }
 }
 
-juce::AudioBuffer<float> loadWavFile(juce::MemoryInputStream& memoryStream) {
+void applyFilter(int channel, float subblockSize, double sampleRate, 
+                 juce::dsp::IIR::Filter<float>& lowPassFilter, juce::dsp::ProcessSpec spec, juce::AudioBuffer<float>& buffer) {
+    
+    float cutoffFrequency = (sampleRate / subblockSize / 2) ;    // Nyquist frequency
+    *lowPassFilter.coefficients = *juce::dsp::IIR::Coefficients<float>::makeLowPass(spec.sampleRate, cutoffFrequency);
+    juce::dsp::AudioBlock<float> audioBlock(buffer);
+    auto channelBlock = audioBlock.getSingleChannelBlock(channel);
+    juce::dsp::ProcessContextReplacing<float> context(channelBlock);
+    lowPassFilter.process(context);
+}
+
+void changeBitDepth(juce::AudioBuffer<float>& buffer, int channel, int paramVal) {
+    // options are 24, 16, 12, 8, 4 bit
+    int bitDepthVal;
+    
+    switch (paramVal) {
+        case 0:
+            bitDepthVal = 24;
+            break;
+        case 1:
+            bitDepthVal = 16;
+            break;
+        case 2:
+            bitDepthVal = 12;
+            break;
+        case 3:
+            bitDepthVal = 8;
+            break;
+        case 4:
+            bitDepthVal = 4;
+            break;
+    }
+    
+    auto* channelData = buffer.getWritePointer (channel);
+    int numSamples = buffer.getNumSamples();
+    int possibleVals = pow(2, bitDepthVal);
+    DBG("new bit depth is " << bitDepthVal);
+    DBG("poss vals is " << possibleVals);
+    
+    
+    /* For each value in the buffer, convert it to the value that it would take in a system using the
+     new bit depth (fewer distinct values between -1.0 and 1.0)
+     1. Multiply original value by the number of possible vals of the new bit depth
+     2. Round to nearest integer
+     3. Divide by number of possible vals to re-normalize to -1.0 to 1.0 range */
+    
+    for (int i = 0; i < numSamples; i++) {
+        channelData[i] = std::round(channelData[i] * possibleVals) / possibleVals;
+    }
     
 }
+
+
