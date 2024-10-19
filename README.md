@@ -1,7 +1,7 @@
 # ALF 
 ALF (All-Purpose Lo-fi Facilitator) is a VST3/AU plugin that gives the user the tools they need to experiment with classic lo-fi audio effects.
 
-https://github.com/chrisrelyea/ALF/blob/main/screenshot.png
+<img width="495" alt="screenshot" src="https://github.com/user-attachments/assets/9eb982f2-3464-4245-a04a-63271cfdfc39">
 
 Created by Chris Relyea, 2024. Made with JUCE.
 
