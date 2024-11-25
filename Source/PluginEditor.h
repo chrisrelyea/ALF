@@ -43,6 +43,38 @@ private:
     juce::AudioProcessorValueTreeState::SliderAttachment noiseLevelAttachment { audioProcessor.apvts, noiseLevelParamID.getParamID(), noiseLevelSlider};
     
 
+    // pre lp filter toggle
+    juce::ToggleButton preLpButton;
+    juce::AudioProcessorValueTreeState::ButtonAttachment preLPAttachment {audioProcessor.apvts,
+        lpPreParamID.getParamID(), preLpButton};
+    juce::Label preLPLabel;
+    
+    // post lp filter toggle
+    juce::ToggleButton postLpButton;
+    juce::AudioProcessorValueTreeState::ButtonAttachment postLPAttachment {audioProcessor.apvts,
+        lpPostParamID.getParamID(), postLpButton};
+    juce::Label postLPLabel;
+    
+    
+    // bit depth control toggle
+    juce::ToggleButton bitDepthControlButton;
+    juce::AudioProcessorValueTreeState::ButtonAttachment bitDepthControlAttachment {audioProcessor.apvts,
+        bitDepthOnParamID.getParamID(), bitDepthControlButton};
+    juce::Label bitDepthControlLabel;
+    
+
+    // bit depth slider or buttons
+    juce::Slider bitDepthSlider;
+    juce::AudioProcessorValueTreeState::SliderAttachment bitDepthSliderAttachment {audioProcessor.apvts,
+        bitDepthValParamID.getParamID(), bitDepthSlider};
+    
+    juce::Label targetBitDepthLabel;
+    
+    
+    // noise level
+    juce::Slider gainSlider;
+    juce::Label gainLabel;
+    juce::AudioProcessorValueTreeState::SliderAttachment gainAttachment { audioProcessor.apvts, gainValParamID.getParamID(), gainSlider};
 
     // kHz textbox
     juce::Label targetRateLabel;

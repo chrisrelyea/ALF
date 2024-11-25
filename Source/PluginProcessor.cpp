@@ -189,6 +189,20 @@ void ALFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
 
         
         
+        
+        
+        
+        // if bit depth control enabled, change bit depth to new target bit depth
+        // options are 24, 16, 12, 8, 4 (bitDepthVal parameter values 0, 1, 2, 3, 4 respectively)
+
+        if (apvts.getRawParameterValue(bitDepthOnParamID.getParamID())->load()) {  // if bit depth control enabled
+            int paramVal = apvts.getRawParameterValue(bitDepthValParamID.getParamID())->load();
+            changeBitDepth(buffer, channel, paramVal);
+        }
+        
+        if (apvts.getRawParameterValue(lpPostParamID.getParamID())->load() && subblockSize > 1) applyFilter(channel, subblockSize, getSampleRate(), lowPassFilter, spec, buffer);
+        
+        
         // add vinyl noise
         float noiseModifier = apvts.getRawParameterValue(noiseLevelParamID.getParamID())->load();
         if (channel < vinylBuffer.getNumChannels())
@@ -204,17 +218,6 @@ void ALFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
                 currentVinylIndex++;
             }
         }
-        
-        
-        // if bit depth control enabled, change bit depth to new target bit depth
-        // options are 24, 16, 12, 8, 4 (bitDepthVal parameter values 0, 1, 2, 3, 4 respectively)
-
-        if (apvts.getRawParameterValue(bitDepthOnParamID.getParamID())->load()) {  // if bit depth control enabled
-            int paramVal = apvts.getRawParameterValue(bitDepthValParamID.getParamID())->load();
-            changeBitDepth(buffer, channel, paramVal);
-        }
-        
-        if (apvts.getRawParameterValue(lpPostParamID.getParamID())->load() && subblockSize > 1) applyFilter(channel, subblockSize, getSampleRate(), lowPassFilter, spec, buffer);
         
         buffer.applyGain(apvts.getRawParameterValue(gainValParamID.getParamID())->load());
         
