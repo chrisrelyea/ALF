@@ -112,7 +112,9 @@ void changeBitDepth(juce::AudioBuffer<float>& buffer, int channel, int paramVal)
      3. Divide by number of possible vals to re-normalize to -1.0 to 1.0 range */
     
     for (int i = 0; i < numSamples; i++) {
-        channelData[i] = static_cast<int>(channelData[i] * possibleVals) / possibleVals;
+        channelData[i] = static_cast<float>(static_cast<int>(channelData[i] * possibleVals)) / possibleVals;
     }
     
 }
+
+
